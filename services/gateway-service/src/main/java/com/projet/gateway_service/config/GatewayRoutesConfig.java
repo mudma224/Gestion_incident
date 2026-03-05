@@ -4,6 +4,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.function.RouterFunction;
 import org.springframework.web.servlet.function.ServerResponse;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.function.RequestPredicates;
 
 import static org.springframework.cloud.gateway.server.mvc.handler.GatewayRouterFunctions.route;
@@ -18,8 +20,21 @@ public class GatewayRoutesConfig {
     public RouterFunction<ServerResponse> incidentRoute() {
         return route("incident_route")
                 .route(RequestPredicates.path("/api/incidents/**"), http())
-                .filter(stripPrefix(1))                    // Supprime /api
-                .filter(lb("INCIDENT-SERVICE"))            // ← C'EST ÇA LA CLÉ (Load Balancer via Eureka)
+                .filter(stripPrefix(1))
+                .filter(lb("INCIDENT-SERVICE"))
                 .build();
     }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+    return new WebMvcConfigurer() {
+        @Override
+        public void addCorsMappings(CorsRegistry registry) {
+            registry.addMapping("/api/**")
+                    .allowedOrigins("http://localhost:5173")
+                    .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                    .allowedHeaders("*");
+        }
+    };
+}
 }
