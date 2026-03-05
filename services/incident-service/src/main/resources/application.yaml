@@ -7,9 +7,9 @@ spring:
 
   datasource:
     # L'adresse de ta base de données (que tu dois créer dans pgAdmin avant)
-    url: jdbc:postgresql://localhost:5432/db_incidents?currentSchema=manage 
+    url: jdbc:postgresql://localhost:5432/db_incidents?currentSchema=manage # Remplace "db_incidents" par le nom de ta base de données PostgreSQL et "manage" par le nom de ton schéma si tu en as un
     username: postgres
-    password: 342742868
+    password: Mon_Mot_De_Passe # Remplace par ton mot de passe PostgreSQL
     driver-class-name: org.postgresql.Driver
   jpa:
     properties:
