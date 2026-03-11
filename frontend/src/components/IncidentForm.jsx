@@ -56,8 +56,8 @@ function IncidentForm({ newIncident, setNewIncident, handleSubmit }) {
       </div>
 
       <button className="success-btn" type="submit">
-        <Send size={18} />
-        Enregistrer
+         <Send size={18} />
+         Enregistrer
       </button>
 
     </form>
