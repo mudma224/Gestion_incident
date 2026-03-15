@@ -50,8 +50,10 @@ GESTION_INCIDENT_LOCAL/
 │   └── comment-service/     # (À venir)
 ├── frontend/                # Interface Utilisateur React (Port 5173)
 └── README.md                # Documentation du projet
+```
+---
 
-⚙️ Prérequis
+## ⚙️ Prérequis
 Pour exécuter ce projet localement, vous devez avoir installé :
 
 Java Development Kit (JDK) 21
@@ -60,31 +62,34 @@ Node.js & npm (pour le frontend)
 
 Maven (inclus via le wrapper mvnw dans chaque projet Spring)
 
-🏃‍♂️ Comment lancer le projet localement ?
+---
+
+## 🏃‍♂️ Comment lancer le projet localement ?
+
 L'ordre de lancement est très important dans une architecture microservices. L'annuaire (Eureka) doit être lancé en premier.
 
-1. Lancer l'Annuaire (Eureka Server)
+*1. **Lancer l'Annuaire (Eureka Server)**
 Ouvrez un terminal dans le dossier eureka-server :
 
 Bash
 ./mvnw spring-boot:run
 Vérification : Allez sur http://localhost:8761. Vous devriez voir le tableau de bord d'Eureka.
 
-2. Lancer le Service Métier (Incident Service)
+*2. **Lancer le Service Métier (Incident Service)**
 Ouvrez un terminal dans le dossier services/incident-service :
 
 Bash
 ./mvnw spring-boot:run
 Vérification : Actualisez la page d'Eureka, vous devriez voir INCIDENT-SERVICE apparaître dans la liste des instances.
 
-3. Lancer la Gateway (Point d'entrée)
+*3. **Lancer la Gateway (Point d'entrée)**
 Ouvrez un terminal dans le dossier gateway-service :
 
 Bash
 ./mvnw spring-boot:run
 Note : La Gateway est configurée en Java (via RouterFunction) pour router /api/incidents/** vers le service d'incidents, tout en gérant le CORS pour le port 5173.
 
-4. Lancer le Frontend (React)
+*4. **Lancer le Frontend (React)**
 Ouvrez un terminal dans le dossier frontend :
 
 Bash
@@ -92,7 +97,10 @@ npm install
 npm run dev
 L'application sera accessible sur http://localhost:5173. Vous pouvez maintenant créer et voir les incidents !
 
-🤝 Comment contribuer ?
+---
+
+## 🤝 Comment contribuer ?
+
 Faire un Fork du dépôt.
 
 Créer une branche pour votre fonctionnalité (git checkout -b feature/MaNouvelleFonctionnalite).
