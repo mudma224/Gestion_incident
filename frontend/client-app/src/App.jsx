@@ -1,15 +1,22 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Sidebar from "./components/layout/Sidebar";
-import Home from "./pages/Home";
+import IncidentForm from "./components/incidents/IncidentForm";
+import IncidentsPage from "./pages/IncidentsPage";
 
 function App() {
   return (
-    <div className="app">
-      <Sidebar />
+    <BrowserRouter>
+      <div className="app">
+        <Sidebar />
 
-      <div className="main">
-        <Home />
+        <div className="main">
+          <Routes>
+            <Route path="/" element={<IncidentsPage />} />
+            <Route path="/new" element={<IncidentForm />} />
+          </Routes>
+        </div>
       </div>
-    </div>
+    </BrowserRouter>
   );
 }
 
