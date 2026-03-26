@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { getIncidents, createIncident } from './api';
-import { AlertCircle, Plus, Send, X } from 'lucide-react';
+import { AlertCircle, Plus, Send, X, MessageSquare } from 'lucide-react';
+import CommentSection from './components/CommentSection';
 
 function App() {
   const [incidents, setIncidents] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [newIncident, setNewIncident] = useState({ titre: '', description: '' });
+  const [selectedIncidentId, setSelectedIncidentId] = useState(null);
 
   useEffect(() => {
     fetchData();
@@ -14,6 +16,7 @@ function App() {
   const fetchData = async () => {
     try {
       const response = await getIncidents();
+      console.log("Données reçues du Backend :", response.data);
       setIncidents(response.data);
     } catch (error) {
       console.error("Erreur de récupération:", error);
@@ -24,23 +27,25 @@ function App() {
     e.preventDefault();
     try {
       await createIncident(newIncident);
-      setNewIncident({ titre: '', description: '' }); // Reset
-      setShowForm(false); // Fermer le formulaire
-      fetchData(); // Rafraîchir la liste
+      setNewIncident({ titre: '', description: '' });
+      setShowForm(false);
+      fetchData();
     } catch (error) {
       alert("Erreur lors de la création de l'incident");
     }
   };
 
   return (
-    <div style={{ padding: '30px', maxWidth: '900px', margin: '0 auto', fontFamily: 'system-ui' }}>
+    <div style={{ padding: '30px', maxWidth: '1000px', margin: '0 auto', fontFamily: 'system-ui' }}>
       <header style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '30px' }}>
-        <h1><AlertCircle color="#e11d48" /> MVP Incidents</h1>
+        <h1 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <AlertCircle color="#e11d48" /> MVP Incidents
+        </h1>
         <button 
           onClick={() => setShowForm(!showForm)}
-          style={{ backgroundColor: '#2563eb', color: 'white', border: 'none', padding: '3px 5px', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+          style={{ backgroundColor: '#2563eb', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
         >
-          {showForm ? <X size={10} /> : <Plus size={10} />}
+          {showForm ? <X size={18} /> : <Plus size={18} />}
           {showForm ? 'Annuler' : 'Nouvel Incident'}
         </button>
       </header>
@@ -73,23 +78,46 @@ function App() {
         </form>
       )}
 
-      {/* Tableau identique à l'étape précédente */}
       <div style={{ backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', overflow: 'hidden' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead style={{ backgroundColor: '#f3f4f6' }}>
             <tr>
               <th style={{ padding: '15px', textAlign: 'left' }}>Titre</th>
               <th style={{ padding: '15px', textAlign: 'left' }}>Description</th>
-              <th style={{ padding: '15px', textAlign: 'left' }}>Status</th>
+              <th style={{ padding: '15px', textAlign: 'left' }}>Statut</th>
+              <th style={{ padding: '15px', textAlign: 'left' }}>Action</th>
             </tr>
           </thead>
           <tbody>
             {incidents.map(inc => (
-              <tr key={inc.id} style={{ borderTop: '1px solid #e5e7eb' }}>
-                <td style={{ padding: '15px' }}>{inc.titre}</td>
-                <td style={{ padding: '15px' }}>{inc.description}</td>
-                <td style={{ padding: '15px' }}><span style={{ color: '#059669', fontWeight: '500' }}>Ouvert</span></td>
-              </tr>
+              <React.Fragment key={inc.id}>
+                <tr style={{ borderTop: '1px solid #e5e7eb' }}>
+                  <td style={{ padding: '15px' }}>{inc.titre}</td>
+                  <td style={{ padding: '15px' }}>{inc.description}</td>
+                  <td style={{ padding: '15px' }}>
+                    <span style={{ backgroundColor: '#dcfce7', color: '#166534', padding: '4px 8px', borderRadius: '12px', fontSize: '12px' }}>
+                      {inc.statut || 'OUVERT'}
+                    </span>
+                  </td>
+                  <td style={{ padding: '15px' }}>
+                    <button 
+                      onClick={() => setSelectedIncidentId(selectedIncidentId === inc.id ? null : inc.id)}
+                      style={{ background: 'none', border: 'none', color: '#2563eb', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px' }}
+                    >
+                      <MessageSquare size={16} /> 
+                      {selectedIncidentId === inc.id ? 'Fermer' : 'Commenter'}
+                    </button>
+                  </td>
+                </tr>
+                
+                {selectedIncidentId === inc.id && (
+                  <tr>
+                    <td colSpan="4" style={{ padding: '15px', backgroundColor: '#f8fafc' }}>
+                      <CommentSection incidentId={inc.id} />
+                    </td>
+                  </tr>
+                )}
+              </React.Fragment>
             ))}
           </tbody>
         </table>

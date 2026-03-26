@@ -1,22 +1,23 @@
 package com.projet.incident_service.controller;
 
 import com.projet.incident_service.model.Incident;
-import com.projet.incident_service.service.IncidentService; // On importe le service
+import com.projet.incident_service.service.IncidentService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.*; // L'importation CrossOrigin est incluse ici
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:5173") // <-- AJOUTE CETTE LIGNE
 @RestController
 @RequestMapping("/incidents")
 public class IncidentController {
 
     @Autowired
-    private IncidentService incidentService; // On injecte le service, plus le repository
+    private IncidentService incidentService;
 
     @GetMapping("/test")
     public String test() {
-        return "Le Service Incident est opérationnel avec son architecture en couches !";
+        return "Le Service Incident est opérationnel !";
     }
 
     @GetMapping

@@ -1,0 +1,6 @@
+com\projet\comment_service\service\CommentService.class
+com\projet\comment_service\CommentServiceApplication.class
+com\projet\comment_service\repository\CommentRepository.class
+com\projet\comment_service\controller\CommentController.class
+com\projet\comment_service\model\Comment.class
+com\projet\comment_service\model\Comment$CommentBuilder.class
