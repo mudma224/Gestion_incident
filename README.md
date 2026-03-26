@@ -51,7 +51,7 @@ GESTION_INCIDENT_LOCAL/
 ├── frontend/                # Interface Utilisateur React (Port 5173)
 └── README.md                # Documentation du projet
 
-⚙️ Prérequis
+## ⚙️ Prérequis
 Pour exécuter ce projet localement, vous devez avoir installé :
 
 Java Development Kit (JDK) 21
