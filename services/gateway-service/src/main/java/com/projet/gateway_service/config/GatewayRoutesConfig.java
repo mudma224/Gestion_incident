@@ -26,15 +26,24 @@ public class GatewayRoutesConfig {
     }
 
     @Bean
+    public RouterFunction<ServerResponse> commentRoute() {
+        return route("comment_route")
+            .route(RequestPredicates.path("/api/comments/**"), http())
+            .filter(stripPrefix(1)) 
+            .filter(lb("COMMENT-SERVICE"))
+            .build();
+    }
+
+    @Bean
     public WebMvcConfigurer corsConfigurer() {
-    return new WebMvcConfigurer() {
-        @Override
-        public void addCorsMappings(CorsRegistry registry) {
-            registry.addMapping("/api/**")
-                    .allowedOrigins("http://localhost:5173")
-                    .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                    .allowedHeaders("*");
-        }
-    };
-}
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/api/**")
+                        .allowedOrigins("http://localhost:5173")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedHeaders("*");
+            }
+        };
+    }
 }

@@ -1,0 +1,23 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: comment-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/db_incidents?currentSchema=manage # L'URL de ta base de données, avec le nom du schéma
+    username: postgres # Ton utilisateur Postgres
+    password: 342742868 # Ton mot de passe
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update # Crée les tables automatiquement
+    show-sql: true
+    properties:
+      hibernate:
+        default_schema: manage
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
