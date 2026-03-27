@@ -9,7 +9,7 @@ spring:
     # L'adresse de ta base de données (que tu dois créer dans pgAdmin avant)
     url: jdbc:postgresql://localhost:5432/db_incidents?currentSchema=manage 
     username: postgres
-    password: you_said_we_should_not_put_passwords_in_code
+    password: postgres
     driver-class-name: org.postgresql.Driver
   jpa:
     properties:
