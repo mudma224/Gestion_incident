@@ -5,9 +5,11 @@ import com.projet.comment_service.repository.CommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class CommentService {
+
     @Autowired
     private CommentRepository commentRepository;
 
@@ -15,7 +17,7 @@ public class CommentService {
         return commentRepository.save(comment);
     }
 
-    public List<Comment> recupererParIncident(Long incidentId) {
+    public List<Comment> recupererParIncident(UUID incidentId) {   // ← UUID ici
         return commentRepository.findByIncidentId(incidentId);
     }
 }

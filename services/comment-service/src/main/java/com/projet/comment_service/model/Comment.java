@@ -3,21 +3,26 @@ package com.projet.comment_service.model;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.UUID;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Comment {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY) // Optionnel : indique au JSON que l'ID est géré par le serveur
     private Long id;
 
+    @Column(nullable = false, length = 2000)
     private String message;
 
-    private Long incidentId; 
+    @Column(name = "incident_id", nullable = false)
+    private UUID incidentId;          // ← maintenant UUID (cohérent avec Incident)
+
+    @Column(name = "utilisateur_id")
+    private UUID utilisateurId;       // ← on ajoute pour la future sécurité Keycloak
 
     @Column(name = "date_creation", updatable = false, nullable = false)
     private LocalDateTime dateCreation;

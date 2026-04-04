@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/comments")
@@ -20,7 +21,7 @@ public class CommentController {
     }
 
     @GetMapping("/incident/{incidentId}")
-    public List<Comment> getByIncident(@PathVariable Long incidentId) {
+    public List<Comment> getByIncident(@PathVariable UUID incidentId) {   // ← UUID ici
         return commentService.recupererParIncident(incidentId);
     }
 }

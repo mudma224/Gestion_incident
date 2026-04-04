@@ -20,16 +20,18 @@ const CommentList = ({ incidentId }) => {
 
     const handlePostComment = async (e) => {
         e.preventDefault();
-        if (!newComment.trim()) return;
+        if (!newComment.trim() || !incidentId) return;
 
         try {
             await createComment({
-                message: newComment,
-                incidentId: incidentId
+                message: newComment,           // ← correspond exactement au modèle backend
+                incidentId: incidentId,        // ← UUID
+                // utilisateurId sera géré côté backend plus tard
             });
-            setNewComment(""); // Reset champ
-            refreshComments(); // Recharger la liste
+            setNewComment("");
+            refreshComments();
         } catch (err) {
+            console.error("Erreur post commentaire:", err.response?.data || err);
             alert("Erreur lors de l'envoi du commentaire");
         }
     };
