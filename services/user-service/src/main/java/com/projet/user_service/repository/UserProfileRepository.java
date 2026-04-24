@@ -1,0 +1,11 @@
+package com.projet.user_service.repository;
+
+import com.projet.user_service.entity.UserProfile;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.Optional;
+
+public interface UserProfileRepository extends JpaRepository<UserProfile, Long> {
+    Optional<UserProfile> findByKeycloakId(String keycloakId);
+    Optional<UserProfile> findByEmail(String email);
+    boolean existsByKeycloakId(String keycloakId);
+}

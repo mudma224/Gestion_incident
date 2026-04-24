@@ -1,21 +1,14 @@
-server:
-  port: 8082
-
 spring:
   application:
     name: comment-service
-  datasource:
-    url: jdbc:postgresql://localhost:5432/db_incidents?currentSchema=manage # L'URL de ta base de données, avec le nom du schéma
-    username: postgres # Ton utilisateur Postgres
-    password: 342742868 # Ton mot de passe
-    driver-class-name: org.postgresql.Driver
-  jpa:
-    hibernate:
-      ddl-auto: update # Crée les tables automatiquement
-    show-sql: true
-    properties:
-      hibernate:
-        default_schema: manage
+  config:
+    import: optional:configserver:http://localhost:8888
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8180/realms/incidents-realm
+          jwk-set-uri: http://localhost:8180/realms/incidents-realm/protocol/openid-connect/certs
 
 eureka:
   client:

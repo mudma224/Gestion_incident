@@ -1,0 +1,57 @@
+{
+  "realm": "incidents-realm",
+  "enabled": true,
+  "sslRequired": "none",
+  "loginWithEmailAllowed": true,
+  "accessTokenLifespan": 3600,
+  "roles": {
+    "realm": [
+      { "name": "ROLE_ADMIN" },
+      { "name": "ROLE_TECHNICIEN" },
+      { "name": "ROLE_USER" }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "gateway-client",
+      "enabled": true,
+      "publicClient": false,
+      "secret": "gateway-secret-2024",
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": true,
+      "redirectUris": ["http://localhost:8080/*", "http://localhost:3000/*"],
+      "webOrigins": ["*"]
+    },
+    {
+      "clientId": "react-client",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "redirectUris": ["http://localhost:3000/*", "http://localhost:3001/*"],
+      "webOrigins": ["*"]
+    }
+  ],
+  "users": [
+    {
+      "username": "admin",
+      "email": "admin@incidents.com",
+      "enabled": true,
+      "credentials": [{ "type": "password", "value": "admin123", "temporary": false }],
+      "realmRoles": ["ROLE_ADMIN"]
+    },
+    {
+      "username": "technicien1",
+      "email": "tech1@incidents.com",
+      "enabled": true,
+      "credentials": [{ "type": "password", "value": "tech123", "temporary": false }],
+      "realmRoles": ["ROLE_TECHNICIEN"]
+    },
+    {
+      "username": "user1",
+      "email": "user1@incidents.com",
+      "enabled": true,
+      "credentials": [{ "type": "password", "value": "user123", "temporary": false }],
+      "realmRoles": ["ROLE_USER"]
+    }
+  ]
+}

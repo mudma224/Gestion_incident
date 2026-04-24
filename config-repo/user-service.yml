@@ -1,0 +1,22 @@
+server:
+  port: 8081
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/user_db
+    username: incidents_user
+    password: incidents_pass
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+minio:
+  url: http://localhost:9000
+  access-key: minio_user
+  secret-key: minio_pass_2024
+  bucket: avatars
+
+keycloak:
+  auth-server-url: http://localhost:8180
+  realm: incidents-realm

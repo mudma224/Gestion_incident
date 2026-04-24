@@ -1,10 +1,12 @@
 package com.projet.incident_service.repository;
 
-import com.projet.incident_service.model.Incident;
+import com.projet.incident_service.entity.*;
 import org.springframework.data.jpa.repository.JpaRepository;
-import java.util.UUID;
+import java.util.List;
 
-// On crée une "Interface". C'est comme un contrat.
-// JpaRepository contient déjà toutes les fonctions : save(), findAll(), delete()...
-public interface IncidentRepository extends JpaRepository<Incident, UUID> {
+public interface IncidentRepository extends JpaRepository<Incident, Long> {
+    List<Incident> findByCreatedByKeycloakId(String keycloakId);
+    List<Incident> findByAssignedToKeycloakId(String keycloakId);
+    List<Incident> findByStatus(IncidentStatus status);
+    List<Incident> findByPriority(Priority priority);
 }

@@ -1,5 +1,9 @@
-C:\Users\E L I T E B O O K\Desktop\gestion_incident_local\services\comment-service\src\main\java\com\projet\comment_service\CommentServiceApplication.java
-C:\Users\E L I T E B O O K\Desktop\gestion_incident_local\services\comment-service\src\main\java\com\projet\comment_service\controller\CommentController.java
-C:\Users\E L I T E B O O K\Desktop\gestion_incident_local\services\comment-service\src\main\java\com\projet\comment_service\model\Comment.java
-C:\Users\E L I T E B O O K\Desktop\gestion_incident_local\services\comment-service\src\main\java\com\projet\comment_service\repository\CommentRepository.java
-C:\Users\E L I T E B O O K\Desktop\gestion_incident_local\services\comment-service\src\main\java\com\projet\comment_service\service\CommentService.java
+C:\Users\E L I T E B O O K\Desktop\incidents-app\services\comment-service\src\main\java\com\projet\comment_service\CommentServiceApplication.java
+C:\Users\E L I T E B O O K\Desktop\incidents-app\services\comment-service\src\main\java\com\projet\comment_service\config\SecurityConfig.java
+C:\Users\E L I T E B O O K\Desktop\incidents-app\services\comment-service\src\main\java\com\projet\comment_service\controller\CommentController.java
+C:\Users\E L I T E B O O K\Desktop\incidents-app\services\comment-service\src\main\java\com\projet\comment_service\dto\CommentDto.java
+C:\Users\E L I T E B O O K\Desktop\incidents-app\services\comment-service\src\main\java\com\projet\comment_service\dto\CreateCommentRequest.java
+C:\Users\E L I T E B O O K\Desktop\incidents-app\services\comment-service\src\main\java\com\projet\comment_service\entity\Comment.java
+C:\Users\E L I T E B O O K\Desktop\incidents-app\services\comment-service\src\main\java\com\projet\comment_service\repository\CommentRepository.java
+C:\Users\E L I T E B O O K\Desktop\incidents-app\services\comment-service\src\main\java\com\projet\comment_service\service\CommentService.java
+C:\Users\E L I T E B O O K\Desktop\incidents-app\services\comment-service\src\main\java\com\projet\comment_service\service\MinioService.java
