@@ -1,0 +1,17 @@
+server:
+  port: 8085
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/notification_db
+    username: incidents_user
+    password: incidents_pass
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+notification:
+  mail:
+    from: noreply@incidents-app.com
+    enabled: false
