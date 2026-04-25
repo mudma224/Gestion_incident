@@ -28,6 +28,7 @@ public class UserProfile {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Column(columnDefinition = "TEXT")
     private String avatarUrl;
 
     @Column(updatable = false)
