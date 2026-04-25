@@ -16,7 +16,3 @@ minio:
   access-key: minio_user
   secret-key: minio_pass_2024
   bucket: avatars
-
-keycloak:
-  auth-server-url: http://localhost:8180
-  realm: incidents-realm

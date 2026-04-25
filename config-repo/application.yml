@@ -19,6 +19,3 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/incidents_db
-    username: incidents_user
-    password: incidents_pass
