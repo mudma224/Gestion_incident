@@ -1,0 +1,30 @@
+server:
+  port: 8084
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/incidents_db
+    username: incidents_user
+    password: incidents_pass
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  # Timeout Spring MVC — 5 minutes pour laisser Mistral répondre
+  mvc:
+    async:
+      request-timeout: 300000
+
+  # Configuration JWT Keycloak
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8180/realms/incidents-realm
+          jwk-set-uri: http://localhost:8180/realms/incidents-realm/protocol/openid-connect/certs
+
+ollama:
+  base-url: http://localhost:11434
+  model: mistral
+  timeout: 300
