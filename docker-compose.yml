@@ -1,0 +1,96 @@
+version: '3.9'
+
+networks:
+  incidents-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  minio_data:
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: incidents-postgres
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: ${POSTGRES_APP_USER:-incidents_app}
+      POSTGRES_PASSWORD: ${POSTGRES_APP_PASSWORD:-change-me-app-password}
+      KEYCLOAK_DB_NAME: ${KEYCLOAK_DB_NAME:-keycloak_db}
+      USER_DB_NAME: ${USER_DB_NAME:-user_db}
+      INCIDENT_DB_NAME: ${INCIDENT_DB_NAME:-incident_db}
+      COMMENT_DB_NAME: ${COMMENT_DB_NAME:-comment_db}
+      NOTIFICATION_DB_NAME: ${NOTIFICATION_DB_NAME:-notification_db}
+      CHAT_DB_NAME: ${CHAT_DB_NAME:-chat_db}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init/01-create-databases.sh:/docker-entrypoint-initdb.d/01-create-databases.sh:ro
+    networks:
+      - incidents-network
+
+  config-server:
+    build:
+      context: ./services/config-server
+    container_name: incidents-config-server
+    environment:
+      CONFIG_SERVER_PORT: ${CONFIG_SERVER_PORT:-8888}
+      CONFIG_REPO_URI: file:///config-repo
+      CONFIG_REPO_LABEL: ${CONFIG_REPO_LABEL:-main}
+      EUREKA_DEFAULT_ZONE: http://eureka-server:8761/eureka/
+    ports:
+      - "${CONFIG_SERVER_PORT:-8888}:8888"
+    volumes:
+      - ./config-repo:/config-repo
+    depends_on:
+      - eureka-server
+    networks:
+      - incidents-network
+
+  eureka-server:
+    build:
+      context: ./services/eureka-server
+    container_name: incidents-eureka
+    ports:
+      - "${EUREKA_PORT:-8761}:8761"
+    networks:
+      - incidents-network
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:23.0
+    container_name: incidents-keycloak
+    command: start-dev --import-realm
+    environment:
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN_USERNAME:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-change-me-admin-password}
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/${KEYCLOAK_DB_NAME:-keycloak_db}
+      KC_DB_USERNAME: ${POSTGRES_APP_USER:-incidents_app}
+      KC_DB_PASSWORD: ${POSTGRES_APP_PASSWORD:-change-me-app-password}
+      KC_HTTP_ENABLED: "true"
+      KC_HOSTNAME_STRICT: "false"
+      KC_PROXY: edge
+    ports:
+      - "8180:8080"
+    volumes:
+      - ./docker/keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json:ro
+    depends_on:
+      - postgres
+    networks:
+      - incidents-network
+
+  minio:
+    image: minio/minio:latest
+    container_name: incidents-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-change-me-minio-password}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    networks:
+      - incidents-network
