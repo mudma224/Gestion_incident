@@ -1,0 +1,18 @@
+server:
+  port: ${NOTIFICATION_SERVICE_PORT:8085}
+
+spring:
+  datasource:
+    url: ${USER_DB_URL:jdbc:postgresql://localhost:5432/notification_db}
+    username: ${POSTGRES_APP_USER:incidents_user}
+    password: ${POSTGRES_APP_PASSWORD:incidents_pass}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+notification:
+  mail:
+    from: ${NOTIFICATION_FROM_ADDRESS:noreply@incidents-app.local}
+    enabled: false

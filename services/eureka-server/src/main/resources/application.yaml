@@ -1,5 +1,5 @@
 server:
-  port: 8761
+  port: ${EUREKA_PORT:8761}
 
 spring:
   application:
@@ -7,14 +7,14 @@ spring:
 
 eureka:
   instance:
-    hostname: localhost
+    hostname: ${EUREKA_HOSTNAME:localhost}
   client:
-    register-with-eureka: false   # ne s'enregistre pas lui-même
-    fetch-registry: false         # ne récupère pas la liste des services
+    register-with-eureka: false
+    fetch-registry: false
     service-url:
       defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
   server:
-    wait-time-in-ms-when-sync-empty: 0  # démarrage rapide en dev
+    wait-time-in-ms-when-sync-empty: 0
 
 management:
   endpoints:

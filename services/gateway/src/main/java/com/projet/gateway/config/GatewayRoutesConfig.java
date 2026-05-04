@@ -45,4 +45,13 @@ public class GatewayRoutesConfig {
                 .filter(lb("CHAT-SERVICE"))
                 .build();
     }
+
+    @Bean
+    public RouterFunction<ServerResponse> notificationRoute() {
+        return route("notification_route")
+                .route(RequestPredicates.path("/api/notifications/**"), http())
+                .filter(lb("NOTIFICATION-SERVICE"))
+                .build();
+    }
+
 }

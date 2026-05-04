@@ -1,40 +1,58 @@
 package com.projet.chat_service.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "chat_messages")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Table(
+        name = "chat_messages",
+        indexes = {
+                @Index(name = "idx_chat_messages_user_created_at", columnList = "userKeycloakId, createdAt"),
+                @Index(name = "idx_chat_messages_related_incident", columnList = "relatedIncidentId"),
+                @Index(name = "idx_chat_messages_created_incident", columnList = "createdIncidentId")
+        }
+)
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ChatMessage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Lien vers la conversation parente
     @Column(nullable = false)
-    private Long conversationId;
+    private String userKeycloakId;
 
-    // USER ou ASSISTANT
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private MessageRole role;
-
-    // Le contenu du message (texte libre)
     @Column(columnDefinition = "TEXT", nullable = false)
-    private String content;
+    private String userMessage;
 
-    // IDs des incidents suggérés par l'IA pour ce message
-    // Stockés en JSON simple ex: "12,45,67" — null si aucune suggestion
-    private String suggestedIncidentIds;
+    @Column(columnDefinition = "TEXT")
+    private String botResponse;
+
+    private Long relatedIncidentId;
+    private Long createdIncidentId;
 
     @Column(updatable = false)
-    private LocalDateTime sentAt;
+    private LocalDateTime createdAt;
 
     @PrePersist
     protected void onCreate() {
-        sentAt = LocalDateTime.now();
+        createdAt = LocalDateTime.now();
     }
 }
