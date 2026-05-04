@@ -11,3 +11,24 @@ spring:
               allowed-methods: "*"
               allowed-headers: "*"
               allow-credentials: true
+
+        routes:                          # ← même niveau que globalcors
+          - id: user-service             # ← routes déjà existantes de tes coéquipiers
+            uri: lb://USER-SERVICE
+            predicates:
+              - Path=/api/users/**
+
+          - id: incident-service
+            uri: lb://INCIDENT-SERVICE
+            predicates:
+              - Path=/api/incidents/**
+
+          - id: comment-service          # etc...
+            uri: lb://COMMENT-SERVICE
+            predicates:
+              - Path=/api/comments/**
+
+          - id: chat-service             # ← tu ajoutes ça à la fin
+            uri: lb://CHAT-SERVICE
+            predicates:
+              - Path=/api/chat/**

@@ -37,4 +37,12 @@ public class GatewayRoutesConfig {
                 .filter(lb("COMMENT-SERVICE"))
                 .build();
     }
+
+    @Bean
+    public RouterFunction<ServerResponse> chatRoute() {
+        return route("chat_route")
+                .route(RequestPredicates.path("/api/chat/**"), http())
+                .filter(lb("CHAT-SERVICE"))
+                .build();
+    }
 }

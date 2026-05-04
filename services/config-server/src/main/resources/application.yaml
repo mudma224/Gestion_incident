@@ -8,7 +8,7 @@ spring:
     config:
       server:
         git:
-          uri: file:///C:/Users/E L I T E B O O K/Desktop/incidents-app/config-repo
+          uri: file:///C:\Users\admin\Desktop\incid3\config-repo
           # Remplace par le chemin absolu vers ton dossier config-repo
           # Exemple Windows : file:///C:/projets/incidents-app/config-repo
           # Exemple Linux/Mac : file:///home/user/incidents-app/config-repo
