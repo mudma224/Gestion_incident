@@ -99,7 +99,7 @@ All microservices:
 ### Backend
 | Technology | Role |
 |---|---|
-| **Java 21 / Spring Boot 3** | Core framework for all microservices |
+| **Java 21 / Spring Boot 4.0.6** | Core framework for all microservices |
 | **Spring Cloud Gateway (MVC)** | Reactive-free API Gateway with load balancing |
 | **Spring Cloud Config** | Externalized, centralized configuration |
 | **Netflix Eureka** | Service registry and client-side discovery |
