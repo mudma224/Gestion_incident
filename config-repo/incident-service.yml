@@ -1,18 +1,28 @@
 server:
-  port: 8082
+  port: ${INCIDENT_SERVICE_PORT:8082}
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/incident_db
-    username: incidents_user
-    password: incidents_pass
+    url: ${USER_DB_URL:jdbc:postgresql://localhost:5432/incident_db}
+    username: ${POSTGRES_APP_USER:incidents_user}
+    password: ${POSTGRES_APP_PASSWORD:incidents_pass}
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 5MB
+      max-request-size: 5MB
 
 minio:
-  url: http://localhost:9000
-  access-key: minio_user
-  secret-key: minio_pass_2024
-  bucket: screenshots
+  url: ${MINIO_PUBLIC_URL:http://localhost:9000}
+  access-key: ${MINIO_ROOT_USER:minioadmin}
+  secret-key: ${MINIO_ROOT_PASSWORD:change-me-minio-password}
+  bucket: ${INCIDENT_SCREENSHOTS_BUCKET:screenshots}
+
+upload:
+  max-file-size-bytes: 5242880
+  presigned-url-expiry-minutes: 60

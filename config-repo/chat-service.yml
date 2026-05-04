@@ -1,0 +1,24 @@
+server:
+  port: ${CHAT_SERVICE_PORT:8084}
+
+spring:
+  datasource:
+    url: ${USER_DB_URL:jdbc:postgresql://localhost:5432/chat_db}
+    username: ${POSTGRES_APP_USER:incidents_user}
+    password: ${POSTGRES_APP_PASSWORD:incidents_pass}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+ollama:
+  base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+  model: ${OLLAMA_MODEL:llama3.2}
+
+incident-service:
+  url: ${INCIDENT_API_URL:http://localhost:8080}
+
+chat:
+  websocket:
+    allowed-origins: ${CHAT_WEBSOCKET_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:3001}

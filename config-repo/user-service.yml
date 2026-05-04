@@ -1,18 +1,32 @@
 server:
-  port: 8081
+  port: ${USER_SERVICE_PORT:8081}
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/user_db
-    username: incidents_user
-    password: incidents_pass
+    url: ${USER_DB_URL:jdbc:postgresql://localhost:5432/user_db}
+    username: ${POSTGRES_APP_USER:incidents_user}
+    password: ${POSTGRES_APP_PASSWORD:incidents_pass}
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 5MB
+      max-request-size: 5MB
 
 minio:
-  url: http://localhost:9000
-  access-key: minio_user
-  secret-key: minio_pass_2024
-  bucket: avatars
+  url: ${MINIO_PUBLIC_URL:http://localhost:9000}
+  access-key: ${MINIO_ROOT_USER:-minioadmin}
+  secret-key: ${MINIO_ROOT_PASSWORD:-change-me-minio-password}
+  bucket: ${USER_AVATAR_BUCKET:avatars}
+
+upload:
+  max-file-size-bytes: 5242880
+  presigned-url-expiry-minutes: 60
+
+keycloak:
+  auth-server-url: ${KEYCLOAK_AUTH_SERVER_URL:http://localhost:8180}
+  realm: ${KEYCLOAK_REALM:incidents-realm}

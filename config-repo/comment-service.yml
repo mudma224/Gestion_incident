@@ -1,18 +1,31 @@
 server:
-  port: 8083
+  port: ${COMMENT_SERVICE_PORT:8083}
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/comment_db
-    username: incidents_user
-    password: incidents_pass
+    url: ${USER_DB_URL:jdbc:postgresql://localhost:5432/comment_db}
+    username: ${POSTGRES_APP_USER:incidents_user}
+    password: ${POSTGRES_APP_PASSWORD:incidents_pass}
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
 
 minio:
-  url: http://localhost:9000
-  access-key: minio_user
-  secret-key: minio_pass_2024
-  bucket: attachments
+  url: ${MINIO_PUBLIC_URL:http://localhost:9000}
+  access-key: ${MINIO_ROOT_USER:minioadmin}
+  secret-key: ${MINIO_ROOT_PASSWORD:change-me-minio-password}
+  bucket: ${COMMENT_ATTACHMENTS_BUCKET:attachments}
+
+incident-service:
+  url: ${INCIDENT_API_URL:http://localhost:8080}
+
+upload:
+  max-file-size-bytes: 10485760
+  presigned-url-expiry-minutes: 60

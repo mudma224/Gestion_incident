@@ -1,112 +1,317 @@
-# 🚨Système de Gestion d'Incidents (Architecture Microservices)
+# 🚨 Incidents Management Platform
 
-Bienvenue sur le projet **Gestion d'Incidents**. Il s'agit d'une application web complète permettant de déclarer, suivre et gérer des incidents en temps réel. 
-
-Ce projet a été conçu avec une **architecture orientée microservices** pour garantir une haute scalabilité, une séparation des responsabilités et une maintenance facilitée.
+A production-ready, cloud-native **incident management system** built with a **Spring Cloud microservices architecture**. The platform enables teams to report, track, comment on, and resolve incidents in real time — with built-in authentication, file storage, and live notifications.
 
 ---
 
-## 🏗️ Architecture du Projet
+## 📋 Table of Contents
 
-Le système repose sur un backend en **Java (Spring Boot / Spring Cloud)** et un frontend moderne en **React (Vite)**. 
-
-Voici comment les différents blocs communiquent entre eux :
-
-1. **Frontend (React)** : L'interface utilisateur. Elle ne parle jamais directement aux microservices de données, mais passe toujours par la Gateway.
-2. **API Gateway (Port 8080)** : Le "concierge" du système. C'est le point d'entrée unique. Il gère le routage (en supprimant le préfixe `/api`), le Load Balancing et la politique CORS.
-3. **Eureka Server (Port 8761)** : L'annuaire du système (Service Discovery). Chaque microservice vient s'y inscrire au démarrage. Ainsi, la Gateway sait toujours où trouver les services sans avoir besoin de coder leurs adresses IP en dur.
-4. **Incident Service (Port 8081)** : Le cœur métier actuel (MVP). Il gère la création et la récupération des incidents en base de données.
-
----
-
-## 🚀 Fonctionnalités Actuelles (MVP)
-
-- [x] Affichage en temps réel de la liste des incidents.
-- [x] Création d'un nouvel incident (Titre, Description, Statut).
-- [x] Communication sécurisée Frontend ↔ Backend via l'API Gateway.
-- [x] Enregistrement dynamique des services via Eureka.
-
-*À venir : Service de Chat, Service de Commentaires, Tableau de bord Administrateur.*
+- [Overview](#overview)
+- [Architecture](#architecture)
+- [Services](#services)
+- [Tech Stack](#tech-stack)
+- [Infrastructure](#infrastructure)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Environment Variables](#environment-variables)
+  - [Running the Platform](#running-the-platform)
+- [API Gateway Routes](#api-gateway-routes)
+- [Security](#security)
+- [Project Structure](#project-structure)
+- [Contributing](#contributing)
 
 ---
 
-## 🛠️ Technologies Utilisées
+## Overview
 
-* **Backend** : Java 21, Spring Boot, Spring Cloud (Gateway MVC, Netflix Eureka).
-* **Frontend** : React.js, Vite, Axios (pour les requêtes HTTP), Lucide-React (pour les icônes).
-* **Gestionnaire de paquets** : Maven (Backend), npm (Frontend).
+This platform provides a complete lifecycle for incident management:
+
+- **Report** incidents with rich descriptions and file attachments
+- **Comment** collaboratively on open incidents
+- **Chat** in real time around specific incidents
+- **Notify** team members of critical updates automatically
+- **Manage users** with role-based access control via Keycloak
+
+All services communicate through a central **API Gateway** and register themselves with **Eureka** for dynamic service discovery.
 
 ---
 
-## 📂 Structure du Projet
+## Architecture
 
-```text
-GESTION_INCIDENT_LOCAL/
-├── eureka-server/           # Annuaire des microservices (Port 8761)
-├── gateway-service/         # Point d'entrée unique & Routage (Port 8080)
-├── services/                # Dossier contenant tous les microservices métiers
-│   ├── incident-service/    # Gère la logique des incidents (Port 8081)
-│   ├── chat-service/        # (À venir)
-│   └── comment-service/     # (À venir)
-├── frontend/                # Interface Utilisateur React (Port 5173)
-└── README.md                # Documentation du projet
 ```
----
+                        ┌──────────────────────────────────┐
+                        │         API Gateway :8080         │
+                        │   (Spring Cloud Gateway MVC)      │
+                        │   OAuth2 / JWT validation         │
+                        └────────────────┬─────────────────┘
+                                         │
+              ┌──────────────────────────┼──────────────────────────┐
+              │                          │                           │
+   ┌──────────▼──────┐      ┌────────────▼───────┐      ┌──────────▼──────┐
+   │  User Service   │      │ Incident Service    │      │ Comment Service  │
+   │   :8081         │      │                     │      │                  │
+   └─────────────────┘      └─────────────────────┘      └─────────────────┘
+              │                          │                           │
+   ┌──────────▼──────┐      ┌────────────▼───────┐                  │
+   │  Chat Service   │      │Notification Service │                  │
+   │                 │      │                     │                  │
+   └─────────────────┘      └─────────────────────┘                  │
+              │                                                       │
+              └───────────────────────────┬───────────────────────────┘
+                                          │
+              ┌───────────────────────────┼───────────────────────────┐
+              │                           │                            │
+   ┌──────────▼──────┐      ┌─────────────▼──────┐      ┌────────────▼──────┐
+   │   PostgreSQL    │      │     Keycloak        │      │      MinIO        │
+   │   (6 databases) │      │      :8180          │      │   :9000 / :9001   │
+   └─────────────────┘      └────────────────────┘      └───────────────────┘
+              │
+   ┌──────────▼──────┐      ┌────────────────────┐
+   │  Config Server  │      │   Eureka Server     │
+   │    :8888        │      │     :8761           │
+   └─────────────────┘      └────────────────────┘
+```
 
-## ⚙️ Prérequis
-Pour exécuter ce projet localement, vous devez avoir installé :
-
-Java Development Kit (JDK) 21
-
-Node.js & npm (pour le frontend)
-
-Maven (inclus via le wrapper mvnw dans chaque projet Spring)
-
----
-
-## 🏃‍♂️ Comment lancer le projet localement ?
-
-L'ordre de lancement est très important dans une architecture microservices. L'annuaire (Eureka) doit être lancé en premier.
-
-*1. **Lancer l'Annuaire (Eureka Server)**
-Ouvrez un terminal dans le dossier eureka-server :
-
-Bash
-./mvnw spring-boot:run
-Vérification : Allez sur http://localhost:8761. Vous devriez voir le tableau de bord d'Eureka.
-
-*2. **Lancer le Service Métier (Incident Service)**
-Ouvrez un terminal dans le dossier services/incident-service :
-
-Bash
-./mvnw spring-boot:run
-Vérification : Actualisez la page d'Eureka, vous devriez voir INCIDENT-SERVICE apparaître dans la liste des instances.
-
-*3. **Lancer la Gateway (Point d'entrée)**
-Ouvrez un terminal dans le dossier gateway-service :
-
-Bash
-./mvnw spring-boot:run
-Note : La Gateway est configurée en Java (via RouterFunction) pour router /api/incidents/** vers le service d'incidents, tout en gérant le CORS pour le port 5173.
-
-*4. **Lancer le Frontend (React)**
-Ouvrez un terminal dans le dossier frontend :
-
-Bash
-npm install
-npm run dev
-L'application sera accessible sur http://localhost:5173. Vous pouvez maintenant créer et voir les incidents !
+All microservices:
+- Pull their configuration from the **Config Server** at startup
+- Register and discover each other via **Eureka**
+- Are protected behind the **API Gateway**, which validates JWT tokens issued by Keycloak
 
 ---
 
-## 🤝 Comment contribuer ?
+## Services
 
-Faire un Fork du dépôt.
+| Service | Port | Description |
+|---|---|---|
+| **API Gateway** | `8080` | Single entry point — routes, load-balances, and enforces OAuth2/JWT auth |
+| **Config Server** | `8888` | Centralized configuration from a Git repository |
+| **Eureka Server** | `8761` | Service registry and discovery dashboard |
+| **User Service** | `8081` | User management, profiles, avatar upload to MinIO |
+| **Incident Service** | — | Create, update, assign, and resolve incidents |
+| **Comment Service** | — | Threaded comments per incident |
+| **Chat Service** | — | Real-time messaging around incidents |
+| **Notification Service** | — | Push notifications on incident events |
 
-Créer une branche pour votre fonctionnalité (git checkout -b feature/MaNouvelleFonctionnalite).
+---
 
-Commiter vos changements (git commit -m 'Ajout d'une nouvelle fonctionnalité').
+## Tech Stack
 
-Pousser vers la branche (git push origin feature/MaNouvelleFonctionnalite).
+### Backend
+| Technology | Role |
+|---|---|
+| **Java 21 / Spring Boot 3** | Core framework for all microservices |
+| **Spring Cloud Gateway (MVC)** | Reactive-free API Gateway with load balancing |
+| **Spring Cloud Config** | Externalized, centralized configuration |
+| **Netflix Eureka** | Service registry and client-side discovery |
+| **Spring Security OAuth2** | JWT-based resource server on every service |
+| **Spring Data JPA / Hibernate** | ORM and database access layer |
+| **MinIO Java SDK** | Object storage for file uploads (avatars, attachments) |
 
-Ouvrir une Pull Request.
+### Infrastructure
+| Technology | Role |
+|---|---|
+| **PostgreSQL 16** | Relational database — one schema per service |
+| **Keycloak 23** | Identity and Access Management (IAM), OAuth2 / OpenID Connect |
+| **MinIO** | S3-compatible object storage |
+| **Docker / Docker Compose** | Containerization and local orchestration |
+
+---
+
+## Infrastructure
+
+### Databases (PostgreSQL)
+
+Each service owns its own database, enforcing strict data isolation:
+
+| Database | Owner Service |
+|---|---|
+| `keycloak_db` | Keycloak |
+| `user_db` | User Service |
+| `incident_db` | Incident Service |
+| `comment_db` | Comment Service |
+| `notification_db` | Notification Service |
+| `chat_db` | Chat Service |
+
+### Keycloak
+
+Keycloak is configured with a dedicated realm (`incidents-realm`) and handles:
+- User authentication and token issuance
+- Role-based authorization (RBAC)
+- JWT signing and key management
+
+The realm is imported automatically on first startup from `docker/keycloak/realm-export.json`.
+
+### MinIO
+
+MinIO provides S3-compatible object storage for file uploads:
+- **API** — port `9000`
+- **Console** — port `9001`
+- User avatars are stored in the `avatars` bucket
+- Pre-signed URLs are generated for secure, time-limited client-side access (expiry: 60 min)
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- [Docker](https://www.docker.com/) & [Docker Compose](https://docs.docker.com/compose/) v2+
+- [Java 21](https://adoptium.net/) (for local service development)
+- [Maven 3.9+](https://maven.apache.org/)
+
+### Environment Variables
+
+Copy the example file and adjust values before running:
+
+```bash
+cp .env.example .env
+```
+
+| Variable | Default | Description |
+|---|---|---|
+| `POSTGRES_APP_USER` | `incidents_app` | PostgreSQL application user |
+| `POSTGRES_APP_PASSWORD` | `change-me-app-password` | PostgreSQL password — **change in production** |
+| `POSTGRES_PORT` | `5432` | Exposed PostgreSQL port |
+| `KEYCLOAK_ADMIN_USERNAME` | `admin` | Keycloak admin username |
+| `KEYCLOAK_ADMIN_PASSWORD` | `admin` | Keycloak admin password — **change in production** |
+| `KEYCLOAK_DB_NAME` | `keycloak_db` | Keycloak's database name |
+| `MINIO_ROOT_USER` | `minioadmin` | MinIO root user |
+| `MINIO_ROOT_PASSWORD` | `change-me-minio-password` | MinIO root password — **change in production** |
+| `CONFIG_SERVER_PORT` | `8888` | Config Server port |
+| `EUREKA_PORT` | `8761` | Eureka Server port |
+| `GATEWAY_PORT` | `8080` | API Gateway port |
+| `USER_SERVICE_PORT` | `8081` | User Service port |
+
+### Running the Platform
+
+**1. Build all service images**
+
+```bash
+mvn clean package -DskipTests
+```
+
+**2. Start the infrastructure and all services**
+
+```bash
+docker compose up --build
+```
+
+Services start in the correct dependency order:
+1. PostgreSQL
+2. Eureka Server
+3. Config Server (depends on Eureka)
+4. Keycloak (depends on PostgreSQL)
+5. MinIO
+6. All application microservices
+
+**3. Verify everything is up**
+
+| UI | URL |
+|---|---|
+| Eureka Dashboard | http://localhost:8761 |
+| Config Server | http://localhost:8888/user-service/default |
+| Keycloak Admin Console | http://localhost:8180 |
+| MinIO Console | http://localhost:9001 |
+| API Gateway | http://localhost:8080 |
+
+---
+
+## API Gateway Routes
+
+All requests must go through the gateway at `http://localhost:8080`. Endpoints require a valid **Bearer token** (issued by Keycloak) except for `/actuator/health` and `/actuator/info`.
+
+| Prefix | Routed To |
+|---|---|
+| `/api/users/**` | `USER-SERVICE` |
+| `/api/incidents/**` | `INCIDENT-SERVICE` |
+| `/api/comments/**` | `COMMENT-SERVICE` |
+| `/api/chat/**` | `CHAT-SERVICE` |
+| `/api/notifications/**` | `NOTIFICATION-SERVICE` |
+
+**Example — obtain a token from Keycloak:**
+
+```bash
+curl -s -X POST \
+  http://localhost:8180/realms/incidents-realm/protocol/openid-connect/token \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "grant_type=password&client_id=<client_id>&username=<user>&password=<pass>" \
+  | jq .access_token
+```
+
+**Example — call a protected endpoint:**
+
+```bash
+curl http://localhost:8080/api/users/me \
+  -H "Authorization: Bearer <your_token>"
+```
+
+---
+
+## Security
+
+Security is enforced at two levels:
+
+### Gateway Level
+The `SecurityConfig` validates every inbound JWT against Keycloak's public keys (via `jwk-set-uri`) before routing the request. No downstream service is reachable without a valid, non-expired token.
+
+```
+Client → [JWT validated by Gateway] → Microservice
+```
+
+### Service Level
+Each microservice is also configured as an **OAuth2 Resource Server** and independently validates the JWT, providing defense in depth.
+
+**Keycloak token endpoint:**
+```
+http://localhost:8180/realms/incidents-realm/protocol/openid-connect/token
+```
+
+**JWKS (public keys) endpoint:**
+```
+http://localhost:8180/realms/incidents-realm/protocol/openid-connect/certs
+```
+
+---
+
+## Project Structure
+
+```
+.
+├── docker/
+│   ├── keycloak/
+│   │   └── realm-export.json          # Auto-imported Keycloak realm
+│   └── postgres/
+│       └── init/
+│           └── 01-create-databases.sh # Creates all service databases
+├── config-repo/                        # Git-backed config files served by Config Server
+│   ├── user-service.yml
+│   ├── incident-service.yml
+│   └── ...
+├── services/
+│   ├── config-server/
+│   ├── eureka-server/
+│   ├── gateway/
+│   ├── user-service/
+│   ├── incident-service/
+│   ├── comment-service/
+│   ├── chat-service/
+│   └── notification-service/
+├── docker-compose.yml
+└── .env.example
+```
+
+---
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/my-feature`
+3. Commit your changes: `git commit -m "feat: add my feature"`
+4. Push to the branch: `git push origin feature/my-feature`
+5. Open a Pull Request
+
+Please follow [Conventional Commits](https://www.conventionalcommits.org/) for commit messages.
+
+---
+
+> Built with ☕ Spring Boot · 🔐 Keycloak · 🐳 Docker
